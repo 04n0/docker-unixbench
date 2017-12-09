@@ -17,9 +17,12 @@ ENV LANG=en_US.UTF-8 \
 RUN apt-get update && \
     apt-get upgrade -y && \
 # install build packages and tools
-    apt-get install -y build-essential make perl perl-modules libx11-dev libgl1-mesa-dev libxext-dev curl info && \
+    apt-get install --no-install-recommends -y build-essential ca-certificates \
+    make perl perl-modules libx11-dev libgl1-mesa-dev libxext-dev curl info && \
 # download unixbench
-    mkdir -p /app && curl -LsS https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/byte-unixbench/UnixBench${UNIXBENCHVERSION}.tgz | tar -zxf - -C /app && chmod +x /app/UnixBench/Run && \
+    mkdir -p /app && \
+    curl -LsS https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/byte-unixbench/UnixBench${UNIXBENCHVERSION}.tgz | tar -zxf - -C /app && chmod +x /app/UnixBench/Run && \
+# cleanup
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /tmp/*
@@ -27,3 +30,4 @@ RUN apt-get update && \
 WORKDIR /app/UnixBench
 
 ENTRYPOINT ["/app/UnixBench/Run"]
+
