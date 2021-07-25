@@ -22,12 +22,24 @@ RUN apt-get update && \
 # download unixbench
     mkdir -p /app && \
     curl -LsS https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/byte-unixbench/UnixBench${UNIXBENCHVERSION}.tgz | tar -zxf - -C /app && chmod +x /app/UnixBench/Run && \
+    cd /app/UnixBench && \
+    make && \
 # cleanup
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /tmp/*
 
+FROM library/ubuntu:14.04
+
+RUN apt-get update && \
+    apt-get install --no-install-recommends -y make && \
+    apt-get clean && \
+    rm -rf /var/log/* && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /tmp/*
+
+COPY --from=0 /app/UnixBench /app/UnixBench
+
 WORKDIR /app/UnixBench
 
 ENTRYPOINT ["/app/UnixBench/Run"]
-
